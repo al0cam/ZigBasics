@@ -1,22 +1,23 @@
 const std = @import("std");
-const io = std.Io;
 const File = std.Io.File;
 const Writer = std.Io.Writer;
 
-pub fn main() void {
+pub fn main(init: std.process.Init) !void {
     var buffer: [10]u8 = undefined;
 
     // is there a <= ?
     for (0..10) |i| {
-        buffer[i] = @as(u8, @intCast(i))  + 1;
-        std.debug.print("Buffer[{d}]= {d} \n", .{i, buffer[i]});
+        buffer[i] = @as(u8, @intCast(i)) + 1;
+        std.debug.print("Buffer[{d}]= {d} \n", .{ i, buffer[i] });
     }
-    var buffer: [64]u8 = undefined;
     std.debug.print("Cancer: {any} \n", .{buffer});
 
-    const writer: Writer = std.Io.File.writerStreaming(file: File, io: Io, buffer: []u8)
+    var writeBuffer: [64]u8 = undefined;
 
+    const io = init.io;
+    const stdout = File.stdout();
+    var stdoutWriter = stdout.writerStreaming(io, &writeBuffer);
 
-
-    std.Io.Writer.print(writer, "Something", .{});
+    try stdoutWriter.interface.print("CANCER \n", .{});
+    try stdoutWriter.flush();
 }
