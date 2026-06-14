@@ -20,4 +20,23 @@ pub fn main(init: std.process.Init) !void {
 
     try stdoutWriter.interface.print("CANCER \n", .{});
     try stdoutWriter.flush();
+
+
+    // reading input from the console
+    // var text: [300]u8 = undefined;
+    var readBuffer: [64]u8 = undefined;
+
+    const stdin = File.stdin();
+    var stdinReader = stdin.readerStreaming(io, &readBuffer);
+    // returns usize of read buffer
+    // values are saved into the buffer
+    const us = try stdinReader.interface.streamDelimiterEnding(&stdoutWriter.interface, '\n');
+    std.debug.print("What: {any} \n", .{stdinReader.interface.buffer});
+
+    std.debug.print("What we read: {any}\n", .{stdinReader.getSize()});
+    std.debug.print("Size: {any}\n", .{us});
+    const stringRead = stdinReader.interface.buffer.ptr[0..us];
+
+    std.debug.print("What we got: {s}\n", .{stringRead});
+    std.debug.print("Type: {any}\n", .{@TypeOf(stringRead)});
 }
